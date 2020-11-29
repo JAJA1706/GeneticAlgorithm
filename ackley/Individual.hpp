@@ -5,11 +5,11 @@
 
 class Individual{
 public:
-    Individual(){}
+    Individual(const std::vector<double> newChromosomes) : _chromosomes(newChromosomes) {}
     Individual(const Individual& ind) : _fitnessVal(ind._fitnessVal), _chromosomes(ind._chromosomes){}
     std::vector<double> getChromosomes(){ return _chromosomes; }
     double getFitness(){ return _fitnessVal; }
-    void setFitness(double prob){ _fitnessVal = prob; }
+    void evaluate();
     ~Individual(){}
 
 private:
