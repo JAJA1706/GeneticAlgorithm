@@ -8,6 +8,6 @@ void mutation(std::vector<Individual>& Population);
 std::vector<Individual> rouletteSelection(std::vector<Individual> Population);
 void selectionFun2();
 void mySelection();
-std::vector<Individual> geneticAlgorithm();
+std::vector<Individual> geneticAlgorithm(const unsigned DIM, const unsigned POP, const unsigned GEN);
 
 #endif // _ALGORITHM_HPP
