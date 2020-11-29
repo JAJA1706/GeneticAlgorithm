@@ -91,14 +91,14 @@ void mySelection(){}
 
 
 
-std::vector<Individual> geneticAlgorithm(){
+std::vector<Individual> geneticAlgorithm(const unsigned DIM, const unsigned POP, const unsigned GEN){
     std::vector<Individual> Population, newPop;
-    Population = initPopulation(100, 2);                    //inicjacja
+    Population = initPopulation(POP, DIM);                    //inicjacja
     for (unsigned i = 0; i < Population.size(); ++i) {      //ocena
         Population[i].evaluate();
     }
 
-    for (int i = 0; i < 1000; ++i) {
+    for (int i = 0; i < GEN; ++i) {
         newPop = rouletteSelection(Population);             //reprodukcja
         //crossover(newPop);                                //krzyzowanie
         mutation(newPop);                                   //mutacja

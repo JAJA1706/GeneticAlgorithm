@@ -4,9 +4,12 @@
 #include <iostream>
 
 int main() {
+	const unsigned Dimension = 2;
+	const unsigned NumberOfIndividuals = 100;
+	const unsigned NumberOfGenerations = 1000;
 
 	std::vector<Individual> Population;
-	Population = geneticAlgorithm();
+	Population = geneticAlgorithm(Dimension, NumberOfIndividuals, NumberOfGenerations);
 
 	for (Individual indi : Population) {
 		std::vector<double>* chromosomes = indi.getChromosomes();
