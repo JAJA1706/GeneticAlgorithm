@@ -4,6 +4,6 @@
 void Individual::evaluate() {
 	const double ePlus20 = 22.7182818;  //e = 2.718281...
 	double ackley_result;
-	ackley_result = ackley_func(_chromosomes, _chromosomes.size());
+	ackley_result = ackley_func(_genes, _genes.size());
 	_fitnessVal = 1 - ackley_result / ePlus20;
 }

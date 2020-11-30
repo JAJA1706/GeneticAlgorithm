@@ -1,10 +1,11 @@
 #include "algorithm.hpp"
 #include "ackley.hpp"
+#include "Individual.hpp"
 #include <vector>
 #include <iostream>
 
 int main() {
-	const unsigned Dimension = 2;
+	const unsigned Dimension = 1;
 	const unsigned NumberOfIndividuals = 100;
 	const unsigned NumberOfGenerations = 1000;
 
@@ -12,7 +13,7 @@ int main() {
 	Population = geneticAlgorithm(Dimension, NumberOfIndividuals, NumberOfGenerations);
 
 	for (Individual indi : Population) {
-		std::vector<double>* chromosomes = indi.getChromosomes();
+		std::vector<double>* chromosomes = indi.getGenes();
 		for (unsigned i = 0; i < chromosomes->size(); ++i) {
 			std::cout << chromosomes->at(i) << "\n";
 		}
