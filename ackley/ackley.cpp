@@ -2,12 +2,6 @@
 
 #include "ackley.hpp"
 
-/**
- * Implementacja algorytmu genetycznego znajdującego optimum funkcji Ackley'a (https://www.sfu.ca/~ssurjano/ackley.html)
- * w zadanej N-wymiarowej przestrzeni. Przeprowadzenie analizy zbieżności względem dowolnych trzech wybranych metod selekcji.
- * Co najmniej jedna z metod powinna być własną implementacją.
- * */
-
 double ackley_func(std::vector<double>& x, int dim)
 {
 	const double PI = 3.1415926535897932384626433832795029, E = 2.7182818284590452353602874713526625;

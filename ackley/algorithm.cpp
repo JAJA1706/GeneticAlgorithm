@@ -6,16 +6,26 @@
 #include <chrono>
 #include "ackley.hpp"
 #include "Individual.hpp"
+#include "algorithm.hpp"
 
 
-std::vector<Individual> initPopulation(int size, unsigned dimension){
+Algorithm::Algorithm(const int dim, const int numOfIndi, const int numOfGenerations, const int selOpt) {
+    _dim = dim;
+    _numOfIndi = numOfIndi;
+    _numOfGenerations = numOfGenerations;
+    _selOption = selOpt;
+}
+
+
+std::vector<Individual> Algorithm::initPopulation(int size, unsigned dimension){
     std::vector<Individual> newPop;
     for (int i = 0; i < size; ++i) {
         double const lower_bound = -32.768; //value taken from website
         double const upper_bound = 32.768;
         unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count(); //generate a seed
+        std::cout << "seed: " << seed << std::endl;
         std::uniform_real_distribution<double> distri(lower_bound, upper_bound);
-        std::default_random_engine engine;
+        std::default_random_engine engine(seed);
         std::vector<double> chromosomes;
 
         for (unsigned j = 0; j < dimension; ++j) {
@@ -28,35 +38,44 @@ std::vector<Individual> initPopulation(int size, unsigned dimension){
     return newPop;
 }
 
+
 //2 point crossover
-void cross(Individual& first, Individual& second, const unsigned DIM) {
+
+void Algorithm::cross(Individual& first, Individual& second) {
     unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count();
-    std::uniform_int_distribution<int> distri(0, DIM - 1);
+    std::uniform_int_distribution<int> distri(0, _dim - 1);
     std::default_random_engine engine(seed);
+
     int crossPoint1 = distri(engine);
-    int crossPoint2 = distri(engine);     // czy moge dwa razy uzyc distri(engine)?
+    int crossPoint2 = distri(engine);
     
     if (crossPoint1 > crossPoint2)
         std::swap(crossPoint1, crossPoint2);
 
-    for (int i = 0; i < DIM; ++i) {
+    for (int i = 0; i < _dim; ++i) {
         if (!(i >= crossPoint1 && i <= crossPoint2))
             std::swap(first.getGenes()->at(i), second.getGenes()->at(i));
     }
 }
 
-void crossover(std::vector<Individual>& Population, const unsigned DIM) {
+
+void Algorithm::crossover(std::vector<Individual>& Population) {
     unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count();
-    std::uniform_int_distribution<int> distri(0, DIM); // miedzy 0, DIM - 1 czy DIM ????
+    std::uniform_int_distribution<int> distri(0, _numOfIndi - 1);
     std::default_random_engine engine(seed);
 
+    int idx1;
+    int idx2;
+
     for (unsigned i = 0; i < Population.size() / 2; ++i) {
-        cross(Population[distri(engine)], Population[distri(engine)], DIM);
+        idx1 = distri(engine);
+        idx2 = distri(engine);
+        cross(Population[idx1], Population[idx2]);
     }
 }
 
 
-void mutate(double& x) {
+void Algorithm::mutate(double& x) {
     unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count();
     std::normal_distribution<double> distri(0, 5);
     std::default_random_engine engine(seed);
@@ -64,7 +83,8 @@ void mutate(double& x) {
     x += distri(engine);
 }
 
-void mutation(std::vector<Individual>& Population) {
+
+void Algorithm::mutation(std::vector<Individual>& Population) {
     const double probabilityOfChoice = 0.2;
     const double probabilityOfMutation = 0.2;
     unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count();
@@ -86,8 +106,7 @@ void mutation(std::vector<Individual>& Population) {
 
 /* roulettle selection */
 
-std::vector<Individual> rouletteSelection(std::vector<Individual>& Population) { // referencja zamiast kopii
-    //TODO trzeba dodac skalowanie
+std::vector<Individual> Algorithm::rouletteSelection(std::vector<Individual>& Population) { // referencja zamiast kopii
     double sum = 0;
     std::vector<Individual> newPop;
 
@@ -113,7 +132,7 @@ std::vector<Individual> rouletteSelection(std::vector<Individual>& Population) {
 
 /* tournament selection */
 
-std::vector<Individual> initTournament(const unsigned tourSize, const std::vector<Individual>& Population) {
+std::vector<Individual> Algorithm::initTournament(const unsigned tourSize, const std::vector<Individual>& Population) {
     std::vector<Individual> newTour;
     unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count();
     std::uniform_int_distribution<int> distri(0, Population.size() - 1);
@@ -126,7 +145,8 @@ std::vector<Individual> initTournament(const unsigned tourSize, const std::vecto
     return newTour;
 }
 
-Individual chooseWinner(const unsigned tourSize, std::vector<Individual>& tournament) {
+
+Individual Algorithm::chooseWinner(const unsigned tourSize, std::vector<Individual>& tournament) {
     Individual winner(tournament[0]);
 
     for (unsigned i = 1; i < tourSize; ++i)
@@ -136,7 +156,8 @@ Individual chooseWinner(const unsigned tourSize, std::vector<Individual>& tourna
     return winner;
 }
 
-std::vector<Individual> tournamentSel(const unsigned tournamentSize, std::vector<Individual>& Population) {
+
+std::vector<Individual> Algorithm::tournamentSel(const unsigned tournamentSize, std::vector<Individual>& Population) {
     int numOfTournaments = Population.size();
     std::vector<Individual> newPop;
     std::vector<Individual> tournament;
@@ -153,10 +174,11 @@ std::vector<Individual> tournamentSel(const unsigned tournamentSize, std::vector
   * returns population filled with the best 100/breaks percent individuals
   */
 
-std::vector<Individual> bestFractionSel(std::vector<Individual>& Population, int breaks) {
+std::vector<Individual> Algorithm::bestFractionSel(std::vector<Individual>& Population, const int breaks) {
     std::vector<Individual> newPop;
     int range = Population.size()/breaks;
     std::sort(Population.begin(), Population.end());
+    std::reverse(Population.begin(), Population.end());
 
     int i = 0;
     for (; i < breaks; ++i) {
@@ -173,27 +195,49 @@ std::vector<Individual> bestFractionSel(std::vector<Individual>& Population, int
 }
 
 
-typedef std::vector<Individual>(*selecionFun)(std::vector<Individual>& Population);  // maybe pass a function as a parameter?
-
-std::vector<Individual> geneticAlgorithm(const unsigned DIM, const unsigned POP, const unsigned GEN){
+std::vector<Individual> Algorithm::runAlgorithm(){
     const unsigned TOUR_SIZE = 2;
+    const int BREAKS_NUM = 2;
 
     std::vector<Individual> Population, newPop;
-    Population = initPopulation(POP, DIM);                    //inicjacja
-    for (unsigned i = 0; i < Population.size(); ++i) {      //ocena
+    Population = Algorithm::initPopulation(_numOfIndi, _dim);       // inicjalizacja
+
+
+    for (unsigned i = 0; i < Population.size(); ++i) {              // ocena
         Population[i].evaluate();
     }
 
-    for (unsigned i = 0; i < GEN; ++i) {
-        //newPop = rouletteSelection(Population);   
-        newPop = tournamentSel(TOUR_SIZE, Population);
-        //newPop = rouletteSelection(Population);    //reprodukcja, jak wywolac przekazana funkcje jako argument?
-        crossover(newPop, DIM);                                //krzyzowanie
-        mutation(newPop);                                   //mutacja
-        for (unsigned i = 0; i < newPop.size(); ++i) {      //ocena
+
+    for (Individual indi : Population) {
+        std::vector<double>* chromosomes = indi.getGenes();
+        for (unsigned i = 0; i < chromosomes->size(); ++i) {
+            std::cout << chromosomes->at(i) << "\n";
+        }
+        std::cout << "fit:  " << indi.getFitness() * 100 << " %" << "\n";
+    }
+    std::cout << "end of init" << std::endl;
+
+    for (unsigned i = 0; i < _numOfGenerations; ++i) {              // selekcja
+        switch (_selOption) {
+            case 1:
+                newPop = rouletteSelection(Population);
+                break;
+            case 2:
+                newPop = tournamentSel(TOUR_SIZE, Population);
+                break;
+            case 3:
+                newPop = bestFractionSel(Population, BREAKS_NUM);
+                break;
+            default:
+                std::cerr << "Invalid data!" << std::endl;
+                break;
+        }
+        crossover(newPop);                                          // krzyzowanie
+        mutation(newPop);                                           // mutacja
+        for (unsigned i = 0; i < newPop.size(); ++i) {              // ocena
             newPop[i].evaluate();
         }
-        Population = newPop;                                //sukcesja
+        Population = newPop;                                        // sukcesja
     }
     return Population;
 }
