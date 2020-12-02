@@ -1,5 +1,7 @@
 #include "Individual.hpp"
 #include "ackley.hpp"
+#include <iostream>
+
 
 void Individual::evaluate() {
 	const double ePlus20 = 22.7182818;  //max Ackley

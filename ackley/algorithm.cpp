@@ -218,7 +218,7 @@ std::vector<Individual> Algorithm::runAlgorithm(std::ofstream& outfile, int loop
 
     outfile << loopNumber << ": " << geneAlgorithm.getBestFit(Population) << " ";   //wypisanie do pliku pierwszego bestFita
 
-    for (unsigned i = 0; i < _numOfGenerations; ++i) {              // selekcja
+    for (int i = 0; i < _numOfGenerations; ++i) {              // selekcja
         switch (_selOption) {
             case 1:
                 newPop = rouletteSelection(Population);
