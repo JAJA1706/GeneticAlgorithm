@@ -76,8 +76,9 @@ void Algorithm::crossover(std::vector<Individual>& Population) {
 
 
 void Algorithm::mutate(double& x) {
+    const double MUTATION_RANGE = 5;
     unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count();
-    std::normal_distribution<double> distri(0, 5);
+    std::normal_distribution<double> distri(0, MUTATION_RANGE);
     std::default_random_engine engine(seed);
 
     x += distri(engine);
@@ -85,19 +86,19 @@ void Algorithm::mutate(double& x) {
 
 
 void Algorithm::mutation(std::vector<Individual>& Population) {
-    const double probabilityOfChoice = 0.2;
-    const double probabilityOfMutation = 0.2;
+    const double PROBABILITY_OF_CHOICE = 0.2;
+    const double PROBABILITY_OF_MUTATION = 0.2;
     unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count();
     std::uniform_real_distribution<double> distri(0, 1);
     std::default_random_engine engine(seed);
 
     for (unsigned i = 0; i < Population.size(); ++i) {
         double rand = distri(engine);
-        if (rand <= probabilityOfChoice) {
+        if (rand <= PROBABILITY_OF_CHOICE) {
             std::vector<double>* chromosomes = Population[i].getGenes();
             for (unsigned j = 0; j < chromosomes->size(); ++j) {
                 rand = distri(engine);
-                if (rand <= probabilityOfMutation)
+                if (rand <= PROBABILITY_OF_MUTATION)
                     mutate(chromosomes->at(j));
             }
         }
@@ -106,7 +107,7 @@ void Algorithm::mutation(std::vector<Individual>& Population) {
 
 /* roulettle selection */
 
-std::vector<Individual> Algorithm::rouletteSelection(std::vector<Individual>& Population) { // referencja zamiast kopii
+std::vector<Individual> Algorithm::rouletteSelection(std::vector<Individual>& Population) {
     double sum = 0;
     std::vector<Individual> newPop;
 
@@ -202,6 +203,16 @@ double Algorithm::getBestFit(std::vector<Individual>& Population) {
         }
     }
     return bestFit;
+}
+
+double Algorithm::getWorstFit(std::vector<Individual>& Population) {
+    double worstFit = 1;
+    for (unsigned i = 0; i < Population.size(); ++i) {
+        if (Population[i].getFitness() < worstFit) {
+            worstFit = Population[i].getFitness();
+        }
+    }
+    return worstFit;
 }
 
 std::vector<Individual> Algorithm::runAlgorithm(std::ofstream& outfile, int loopNumber){

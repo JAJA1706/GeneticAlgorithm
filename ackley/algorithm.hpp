@@ -10,6 +10,7 @@ public:
     Algorithm (int const dim, int const dumOfIndi, const int numOfGenerations, const int selOpt);
     std::vector<Individual> runAlgorithm(std::ofstream& outfile, int loopNumber);	
     double getBestFit(std::vector<Individual>& Population);
+    double getWorstFit(std::vector<Individual>& Population);
     
 private:	
     std::vector<Individual> 
