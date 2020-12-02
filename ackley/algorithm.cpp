@@ -217,7 +217,7 @@ std::vector<Individual> Algorithm::runAlgorithm(){
     }
     std::cout << "end of init" << std::endl;
 
-    for (unsigned i = 0; i < _numOfGenerations; ++i) {              // selekcja
+    for (int i = 0; i < _numOfGenerations; ++i) {              // selekcja
         switch (_selOption) {
             case 1:
                 newPop = rouletteSelection(Population);

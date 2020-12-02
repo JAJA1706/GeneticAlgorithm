@@ -5,7 +5,7 @@
 
 class Individual{
 public:
-    Individual(const std::vector<double> newChromosomes) : _genes(newChromosomes), _fitnessVal(-1.0) {}
+    Individual(const std::vector<double> newChromosomes) : _fitnessVal(-1.0), _genes(newChromosomes) {}
     Individual(const Individual& ind) : _fitnessVal(ind._fitnessVal), _genes(ind._genes) {}
     std::vector<double>* getGenes() { return &_genes; }
     double getFitness() { return _fitnessVal; }
