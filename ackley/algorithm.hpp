@@ -2,6 +2,7 @@
 #define _ALGORITHM_HPP
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include "Individual.hpp"
 
 class Algorithm {
