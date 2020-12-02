@@ -7,6 +7,7 @@
 #include <cmath>
 #include <random>
 #include <chrono>
+#include <fstream>
 
 
 int main() {
@@ -17,17 +18,19 @@ int main() {
 
 	std::cout << "Selection option: " << std::endl;
 	std::cin >> selOption;
-	
-	Algorithm geneAlgorithm(Dimension, NumberOfIndividuals, NumberOfGenerations, selOption);
-	std::vector<Individual> Population = geneAlgorithm.runAlgorithm();
 
-	for (Individual indi : Population) {
-		std::vector<double>* chromosomes = indi.getGenes();
-		for (unsigned i = 0; i < chromosomes->size(); ++i) {
-			std::cout << chromosomes->at(i) << "\n";
-		}
-		std::cout <<"fit:  "<< indi.getFitness() * 100 << " %" << "\n";
+	std::ofstream outfile;
+	std::ofstream outfileDetailed;
+	outfile.open("data.txt", std::ofstream::out | std::ofstream::trunc);
+	outfileDetailed.open("details.txt", std::ofstream::out | std::ofstream::trunc);
+	
+	for (int i = 0; i < 51; ++i) {
+		Algorithm geneAlgorithm(Dimension, NumberOfIndividuals, NumberOfGenerations, selOption);
+		std::vector<Individual> Population = geneAlgorithm.runAlgorithm(outfileDetailed);
+		outfile << geneAlgorithm.getBestFit(Population, i); << " ";
 	}
 
+	outfile.close();
+	outfileDetailed.close();
     return 0;
 }

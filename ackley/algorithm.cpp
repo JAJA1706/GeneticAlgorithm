@@ -23,7 +23,6 @@ std::vector<Individual> Algorithm::initPopulation(int size, unsigned dimension){
         double const lower_bound = -32.768; //value taken from website
         double const upper_bound = 32.768;
         unsigned seed = (unsigned)std::chrono::system_clock::now().time_since_epoch().count(); //generate a seed
-        std::cout << "seed: " << seed << std::endl;
         std::uniform_real_distribution<double> distri(lower_bound, upper_bound);
         std::default_random_engine engine(seed);
         std::vector<double> chromosomes;
@@ -194,8 +193,18 @@ std::vector<Individual> Algorithm::bestFractionSel(std::vector<Individual>& Popu
     return newPop;
 }
 
+double Algorithm::getBestFit(std::vector<Individual>& Population) {
+    double bestFit = 0;
+    for (unsigned i = 0; i < Population.size(); ++i) {
+        if (Population[i].getFitness() > bestFit) {
+            bestFit = Population[i].getFitness();
+        }
+    }
+    return bestFit;
+}
+}
 
-std::vector<Individual> Algorithm::runAlgorithm(){
+std::vector<Individual> Algorithm::runAlgorithm(std::ofstream& outfile, int loopNumber){
     const unsigned TOUR_SIZE = 2;
     const int BREAKS_NUM = 2;
 
@@ -207,15 +216,7 @@ std::vector<Individual> Algorithm::runAlgorithm(){
         Population[i].evaluate();
     }
 
-
-    for (Individual indi : Population) {
-        std::vector<double>* chromosomes = indi.getGenes();
-        for (unsigned i = 0; i < chromosomes->size(); ++i) {
-            std::cout << chromosomes->at(i) << "\n";
-        }
-        std::cout << "fit:  " << indi.getFitness() * 100 << " %" << "\n";
-    }
-    std::cout << "end of init" << std::endl;
+    outfile << loopNumber << ": " << geneAlgorithm.getBestFit(Population) << " ";   //wypisanie do pliku pierwszego bestFita
 
     for (unsigned i = 0; i < _numOfGenerations; ++i) {              // selekcja
         switch (_selOption) {
@@ -238,6 +239,8 @@ std::vector<Individual> Algorithm::runAlgorithm(){
             newPop[i].evaluate();
         }
         Population = newPop;                                        // sukcesja
+        outfile << geneAlgorithm.getBestFit(Population) << " ";
     }
+    outfile << "\n";
     return Population;
 }
