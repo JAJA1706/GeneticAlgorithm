@@ -4,6 +4,7 @@
 #include <cmath>
 #include <random>
 #include <chrono>
+#include <fstream>
 #include "ackley.hpp"
 #include "Individual.hpp"
 #include "algorithm.hpp"

@@ -2,6 +2,7 @@
 #define _ALGORITHM_HPP
 #include <vector>
 #include <iostream>
+#include <fstream>
 #include "Individual.hpp"
 class Algorithm {
 public:
@@ -12,7 +13,7 @@ public:
 private:
 	std::vector<Individual> initPopulation(int size, unsigned dimension);
 	void mutate(double& x);
-	void cross(Individual& first, Individual& second);
+	void cross(Individual&/ first, Individual& second);
 	std::vector<Individual> initTournament(const unsigned tourSize, const std::vector<Individual>& Population);
 	Individual chooseWinner(const unsigned tourSize, std::vector<Individual>& tournament);
 	std::vector<Individual> tournamentSel(const unsigned tournamentSize, std::vector<Individual>& Population);

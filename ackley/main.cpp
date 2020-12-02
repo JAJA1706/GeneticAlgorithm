@@ -27,7 +27,7 @@ int main() {
 	for (int i = 0; i < 51; ++i) {
 		Algorithm geneAlgorithm(Dimension, NumberOfIndividuals, NumberOfGenerations, selOption);
 		std::vector<Individual> Population = geneAlgorithm.runAlgorithm(outfileDetailed);
-		outfile << geneAlgorithm.getBestFit(Population, i); << " ";
+		outfile << geneAlgorithm.getBestFit(Population, i) << " ";
 	}
 
 	outfile.close();
