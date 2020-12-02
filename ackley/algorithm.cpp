@@ -4,6 +4,7 @@
 #include <cmath>
 #include <random>
 #include <chrono>
+#include <fstream>
 #include "ackley.hpp"
 #include "Individual.hpp"
 #include "algorithm.hpp"
@@ -202,7 +203,6 @@ double Algorithm::getBestFit(std::vector<Individual>& Population) {
     }
     return bestFit;
 }
-}
 
 std::vector<Individual> Algorithm::runAlgorithm(std::ofstream& outfile, int loopNumber){
     const unsigned TOUR_SIZE = 2;
@@ -216,7 +216,7 @@ std::vector<Individual> Algorithm::runAlgorithm(std::ofstream& outfile, int loop
         Population[i].evaluate();
     }
 
-    outfile << loopNumber << ": " << geneAlgorithm.getBestFit(Population) << " ";   //wypisanie do pliku pierwszego bestFita
+    outfile << loopNumber << ": " << getBestFit(Population) << " ";   //wypisanie do pliku pierwszego bestFita
 
     for (int i = 0; i < _numOfGenerations; ++i) {              // selekcja
         switch (_selOption) {
@@ -239,7 +239,7 @@ std::vector<Individual> Algorithm::runAlgorithm(std::ofstream& outfile, int loop
             newPop[i].evaluate();
         }
         Population = newPop;                                        // sukcesja
-        outfile << geneAlgorithm.getBestFit(Population) << " ";
+        outfile << getBestFit(Population) << " ";
     }
     outfile << "\n";
     return Population;
